@@ -1,4 +1,4 @@
-FROM ruby:2.1.10
+FROM drecom/ubuntu-ruby:2.1.10
 
 RUN apt-get update \
     && apt-get install -y --force-yes --no-install-recommends \
@@ -18,3 +18,8 @@ COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
 
 RUN bundle install
+
+ADD entrypoint.sh /usr/bin/entrypoint.sh
+VOLUME ["/app"]
+ENTRYPOINT [ "entrypoint.sh" ]
+CMD ["app:start"]

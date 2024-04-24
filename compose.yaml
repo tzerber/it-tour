@@ -1,0 +1,48 @@
+services:
+  tour-app:
+    #build: .
+    image: packages.4dcoders.com:18079/it-tour:dev
+    container_name: ittour-app
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: tour-db
+      POSTGRES_DB: ittour
+      RAILS_ENV: docker
+      ADMIN_NAME: admin
+      ADMIN_PASSWORD: admin123
+      ADMIN_EMAIL: some@email.com
+      APP_PORT: 9081
+    volumes:
+      - .:/app
+    ports:
+      - "9081:9081"
+    depends_on:
+      - tour-db
+    networks:
+      - ittour_net
+
+  tour-db:
+    image: postgres:13.9
+    hostname: tour-db
+    container_name: tour-db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+    ports:
+      - 5467:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ittour
+    volumes:
+      - ittour-pg-data:/var/lib/postgresql/data
+    networks:
+      - ittour_net
+
+volumes:
+  ittour-pg-data:
+
+networks:
+  ittour_net:
